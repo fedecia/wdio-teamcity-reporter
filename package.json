@@ -41,5 +41,8 @@
     "tape": "^4.6.0",
     "wdio-mocha-framework": "^0.2.13",
     "webdriverio": "^4.2.5"
+  },
+  "peerDependencies": {
+    "@wdio/cli": "^5.3.5"
   }
 }

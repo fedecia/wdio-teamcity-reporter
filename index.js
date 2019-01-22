@@ -1,52 +1,51 @@
 'use strict';
 
-const { EventEmitter } = require('events');
+const WDIOReporter = require('@wdio/reporter').default
 const { buildFormatter, events } = require('./lib/message');
 const { flow } = require('lodash');
-const { inherits } = require('util');
 
-module.exports = WdioTeamcityReporter;
-module.exports.reporterName = 'teamcity';
 
-/**
- * @param {object}  baseReporter
- * @param {object}  wdioConf
- * @param {object}  reporterOptions
- * @param {boolean} reporterOptions.captureStandardOutput
- * @param {boolean} reporterOptions.flowId
- * @param {string}  reporterOptions.message
- * @return {wdioTeamcityReporter}
- */
-function WdioTeamcityReporter(baseReporter, wdioConf, reporterOptions = {}) {
-  this.baseReporter = baseReporter;
+class TeamcityReporter extends WDIOReporter{
+  /**
+   * @param {object}  reporterOptions
+   * @param {boolean} reporterOptions.captureStandardOutput
+   * @param {boolean} reporterOptions.flowId
+   * @param {string}  reporterOptions.message
+   * @return {wdioTeamcityReporter}
+   */
+  constructor (reporterOptions){
+    /**
+     * make teamcity reporter to write to output stream by default
+     */
+    const options = Object.assign({ stdout: true }, reporterOptions);
+    super(options);
+    const opts = {
+      captureStandardOutput: typeof reporterOptions.captureStandardOutput === 'boolean'
+        ? reporterOptions.captureStandardOutput
+        : false,
+      flowId: typeof reporterOptions.flowId === 'boolean'
+        ? reporterOptions.flowId
+        : true,
+      name: typeof reporterOptions.message === 'string'
+        ? reporterOptions.message
+        : '[title]',
+    };
 
-  const opts = {
-    captureStandardOutput: typeof reporterOptions.captureStandardOutput === 'boolean'
-      ? reporterOptions.captureStandardOutput
-      : false,
-    flowId: typeof reporterOptions.flowId === 'boolean'
-      ? reporterOptions.flowId
-      : true,
-    name: typeof reporterOptions.message === 'string'
-      ? reporterOptions.message
-      : '[title]',
-  };
+    this.enableRealTimeOutput(opts);
+  }
 
-  this.enableRealTimeOutput(opts);
-}
-
-inherits(WdioTeamcityReporter, EventEmitter);
-
-WdioTeamcityReporter.prototype.enableRealTimeOutput = function (opts) {
-  events.forEach(event => this.on(event, flow(buildFormatter(event, opts), output)));
-};
-
-/**
- * @param  {string} msg
- * @return {string}
- */
-function output(msg) {
-  if (msg) {
-    console.log(msg);
+  enableRealTimeOutput(opts){
+    events.forEach(event => this.on(event, flow(buildFormatter(event, opts), this.output)));
+  }
+  /**
+   * @param  {string} msg
+   * @return {string}
+   */
+  output(msg) {
+    if (msg) {
+      this.write(msg);
+    }
   }
 }
+
+export default TeamcityReporter
