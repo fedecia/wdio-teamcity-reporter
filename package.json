@@ -2,13 +2,13 @@
   "name": "wdio-teamcity-reporter",
   "version": "1.1.1",
   "description": "WebdriverIO Teamcity reporter",
-  "main": "index.js",
+  "main": "index.ts",
   "engines": {
     "node": ">=0.12"
   },
   "scripts": {
     "cleanup": "git reset --hard",
-    "compile": "babel lib --out-dir lib && babel index.js --out-file index.js",
+    "compile": "babel lib/message.ts --out-file lib/message.js && babel index.ts --out-file index.js",
     "lint": "eslint lib/*.js test/**/*.js *.js",
     "prepublish": "in-publish && npm run -s compile || in-install",
     "publish": "in-publish && npm run -s cleanup || in-install",
@@ -39,7 +39,7 @@
     "eslint": "^2.13.1",
     "in-publish": "^2.0.0",
     "tape": "^4.6.0",
-    "wdio-mocha-framework": "^0.2.13",
+    "@wdio/reporter": "^5.2.3",
     "webdriverio": "^4.2.5"
   },
   "peerDependencies": {

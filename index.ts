@@ -1,11 +1,10 @@
 'use strict';
-export {};
-const WDIOReporter = require('@wdio/reporter').default;
+import WDIOReporter from '@wdio/reporter'
 const { buildFormatter, events } = require('./lib/message');
 const { flow } = require('lodash');
 
 
-module.exports = class TeamcityReporter extends WDIOReporter{
+export default class TeamcityReporter extends WDIOReporter{
   /**
    * @param {object}  reporterOptions
    * @param {boolean} reporterOptions.captureStandardOutput
